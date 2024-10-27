@@ -33,6 +33,32 @@ def get_changed_files():
         print(f'Error getting changed files via git diff: {e}')
         return []
 
+def get_commit_author():
+    """
+    最新のコミットの作者を取得
+    """
+    try:
+        author = subprocess.check_output(['git', 'log', '-1', '--pretty=format:%ae'], text=True).strip()
+        print(f'Latest commit author email: {author}')
+        return author
+    except subprocess.CalledProcessError as e:
+        print(f'Error getting commit author: {e}')
+        return ''
+
+def should_skip_translation(author_email):
+    """
+    特定のユーザー（例: GitHub Actions）によるコミットの場合、翻訳をスキップ
+    """
+    # GitHub Actions のデフォルトのユーザーは 'github-actions[bot]' のメールアドレスです
+    # 確認するメールアドレスを以下に追加
+    skip_authors = [
+        'github-actions[bot]@users.noreply.github.com',
+        # 必要に応じて他のメールアドレスを追加
+    ]
+    if author_email in skip_authors:
+        return True
+    return False
+
 def translate_text(text, target_lang):
     """
     OpenAI APIを使用してテキストを翻訳
@@ -79,6 +105,12 @@ def translate_file(source_file_path, target_file_path, target_lang):
         print(f'Error writing to {target_file_path}: {e}')
 
 def main():
+    # 最新のコミットの作者を取得
+    author_email = get_commit_author()
+    if should_skip_translation(author_email):
+        print('Translation skipped due to commit author.')
+        return
+
     changed_files = get_changed_files()
 
     if not changed_files:
