@@ -1,0 +1,38 @@
+name: Translate Docs
+
+on:
+  push:
+    paths:
+      - 'docs/ja/**'
+      - 'docs/en/**'
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # フル履歴を取得
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # 使用しているNode.jsのバージョンに合わせてください
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Detect changes and translate
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          node scripts/translate.js
+
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "🔄 Update translations from ${{ github.ref }} [skip translation]"
+          branch: ${{ github.ref }}
+          file_pattern: 'docs/en/**,docs/ja/**'
