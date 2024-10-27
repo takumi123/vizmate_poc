@@ -109,13 +109,34 @@ def translate_file(source_file_path, target_file_path, target_lang):
         return
 
     print(f'Translating {source_file_path} to {target_lang}...')
+    
+    # ファイル名を翻訳
+    if target_lang == 'English':
+        # 元のファイル名から拡張子を分離
+        original_stem = Path(source_file_path).stem
+        extension = Path(source_file_path).suffix
+        
+        # ファイル名を翻訳
+        try:
+            translated_filename = translate_text(original_stem, target_lang)
+            # 特殊文字を除去し、スペースをハイフンに変換
+            translated_filename = translated_filename.strip().replace(' ', '-')
+            # 新しいパスを作成（翻訳されたファイル名 + 元の拡張子）
+            target_file_path = target_file_path.parent / f"{translated_filename}{extension}"
+        except Exception as e:
+            print(f'Failed to translate filename: {e}')
+            return
+
     try:
+        # コンテンツを翻訳
         translated_content = translate_text(content, target_lang)
     except Exception as e:
-        print(f'Failed to translate {source_file_path}: {e}')
+        print(f'Failed to translate content: {e}')
         return
 
     try:
+        # ディレクトリが存在しない場合は作成
+        target_file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(target_file_path, 'w', encoding='utf-8') as f:
             f.write(translated_content)
         print(f'Translated and saved to {target_file_path}')
