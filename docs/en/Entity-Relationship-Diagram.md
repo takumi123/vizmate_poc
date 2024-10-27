@@ -1,5 +1,6 @@
 ## Table Structure
 
+
 ### User
 | Field Name | Data Type |
 |--------------|----------|

@@ -22,6 +22,7 @@ This document is a requirements specification for the development of a web appli
 - Login with Google account using OAuth 2.0
 - No other login methods are provided
 
+
 ### 3.2 Google Drive Integration
 - **Google Drive Selection:**  
   After logging in, the user selects a folder from their Google Drive

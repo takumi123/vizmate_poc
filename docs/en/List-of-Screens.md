@@ -22,6 +22,7 @@
    
 ---
 
+
 # Screen Transition Diagram
 
 ```mermaid

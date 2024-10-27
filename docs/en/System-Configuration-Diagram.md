@@ -25,6 +25,7 @@
 5. Authentication information and temporary data are stored in Vercel KV
 6. PDF files and OCR results are stored in Blob Storage
 
+
 ## Security
 
 - All communication is encrypted with HTTPS

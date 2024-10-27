@@ -1,5 +1,6 @@
 # React Component Design
 
+
 ## Component Description
 1. **App**: The root component of the application
 2. **Layout**: A component that provides a common layout
