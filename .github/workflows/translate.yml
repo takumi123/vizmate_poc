@@ -7,7 +7,8 @@ on:
       - 'docs/en/**'
 
 permissions:
-  contents: write  # コミットとプッシュのために必要
+  contents: write  # リポジトリのコンテンツを変更する権限
+  pull-requests: write  # PRに対する権限（必要な場合）
 
 jobs:
   translate:
