@@ -130,8 +130,3 @@
   - **Error:** Returns an error message.
 
 ```
-
-## 8. File List Retrieval API
-This is a test!!!
-!!!
-!!!!
