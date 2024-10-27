@@ -1,10 +1,9 @@
-name: Translate Docs
+name: Translate Documents
 
 on:
   push:
     paths:
-      - 'docs/ja/**'
-      - 'docs/en/**'
+      - 'docs/**'  # docsディレクトリ配下の変更時のみ実行
 
 permissions:
   contents: write  # リポジトリのコンテンツを変更する権限
@@ -16,8 +15,9 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref }} # プッシュされたブランチを参照
           fetch-depth: 0  # フル履歴を取得
 
       - name: Set up Python
@@ -37,10 +37,14 @@ jobs:
           python scripts/translate.py
 
       - name: Commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "🔄 Update translations from ${{ github.ref }}"
-          branch: ${{ github.ref }}
-          file_pattern: 'docs/en/**/*'  # パターンをより具体的に
-          commit_user_name: "github-actions"
-          commit_user_email: "github-actions@github.com"
+        # 翻訳ファイルが作成された場合のみコミット
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # 変更があるかチェック
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git add docs/
+            git commit -m "Translate documents"
+            git push origin ${{ github.ref_name }}
+          fi
