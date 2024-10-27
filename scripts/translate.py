@@ -42,7 +42,10 @@ def get_changed_files(event):
         print('Error: before or after commit SHA is missing in event data.')
         return []
     try:
-        diff_output = subprocess.check_output(['git', 'diff', '--name-only', before, after], text=True)
+        diff_output = subprocess.check_output(
+            ['git', '-c', 'core.quotepath=false', 'diff', '--name-only', before, after],
+            text=True
+        )
         changed_files = [line.strip() for line in diff_output.splitlines() if line.strip()]
         print(f'Changed files via git diff: {changed_files}')
         return changed_files
