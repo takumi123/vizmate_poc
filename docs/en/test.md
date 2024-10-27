@@ -1,1 +1,0 @@
-The English translation for "test" is "test".
