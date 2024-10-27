@@ -37,7 +37,7 @@
 ## 3. Folder Selection API
 - **Endpoint:** `/api/folders/select`
 - **Method:** POST
-- **Description:** Selects the folder for OCR processing.
+- **Description:** Selects a folder for OCR processing.
 - **Request Parameters:**
   - `folderId` (string): ID of the folder to select
     ```json
@@ -85,9 +85,9 @@
 ## 5. OCR Result Retrieval API
 - **Endpoint:** `/api/ocr/:pdfId`
 - **Method:** GET
-- **Description:** Retrieves the OCR results for a specific PDF file.
+- **Description:** Retrieves the OCR result of a specific PDF file.
 - **Request Parameters:**
-  - `pdfId` (string): ID of the PDF file to retrieve OCR results
+  - `pdfId` (string): ID of the PDF file to retrieve the OCR result
 - **Response:**
   - **Success:**
     ```json
@@ -101,9 +101,9 @@
 ## 6. OCR Result Update API
 - **Endpoint:** `/api/ocr/:pdfId`
 - **Method:** PUT
-- **Description:** Updates the OCR results.
+- **Description:** Updates the OCR result.
 - **Request Parameters:**
-  - `pdfId` (string): ID of the PDF file to update OCR results
+  - `pdfId` (string): ID of the PDF file to update the OCR result
   - Body:
     ```json
     {
@@ -114,7 +114,7 @@
   - **Success:**
     ```json
     {
-      "message": "OCR results have been successfully updated.",
+      "message": "The OCR result has been successfully updated.",
       "pdfId": "pdfId1"
     }
     ```
@@ -128,7 +128,3 @@
 - **Response:**
   - **Success:** Downloads the CSV file.
   - **Error:** Returns an error message.
-
-```
-
-

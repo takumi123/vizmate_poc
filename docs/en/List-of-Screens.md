@@ -2,26 +2,25 @@
 
 1. Login Screen
    - Purpose: Authentication with the user's Google account
-   - Main Function: Google Login Button
+   - Main Features: Google login button
 
 2. Folder Selection Screen
-   - Purpose: Select the Google Drive folder for OCR processing
-   - Main Function: Folder list display, Folder selection function
+   - Purpose: Selection of Google Drive folder for OCR processing
+   - Main Features: Folder list display, folder selection function
 
 3. PDF List Screen
    - Purpose: List display of PDF files in the selected folder
-   - Main Function: PDF file list, Status display, Link to detail screen
+   - Main Features: PDF file list, status display, link to detail screen
 
 4. OCR Detail Screen
-   - Purpose: Display and edit OCR results
-   - Main Function: OCR result text display & editing, PDF preview, Save function, Navigation
+   - Purpose: Display and editing of OCR results
+   - Main Features: Display & editing of OCR result text, PDF preview, save function, navigation
 
 5. CSV Download Screen
    - Purpose: CSV export of OCR results
-   - Main Function: CSV Download Button, Progress display
+   - Main Features: CSV download button, progress display
    
 ---
-
 
 # Screen Transition Diagram
 

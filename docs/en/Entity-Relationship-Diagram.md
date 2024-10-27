@@ -1,43 +1,42 @@
 ## Table Structure
 
-
 ### User
 | Field Name | Data Type |
-|--------------|----------|
-| userID       | string   |
-| googleID     | string   |
-| name         | string   |
-| email        | string   |
-| createdAt    | datetime |
+|------------|-----------|
+| userID     | String    |
+| googleID   | String    |
+| Name       | String    |
+| Email      | String    |
+| Created At | DateTime  |
 
 ### Folder
 | Field Name      | Data Type |
-|-------------------|----------|
-| folderID          | string   |
-| userID            | string   |
-| googleFolderID    | string   |
-| folderName        | string   |
-| createdAt         | datetime |
+|-----------------|-----------|
+| folderID        | String    |
+| userID          | String    |
+| googleFolderID  | String    |
+| Folder Name     | String    |
+| Created At      | DateTime  |
 
-### PDFFile
+### PDF File
 
-| Field Name   | Data Type |
-|----------------|----------|
-| pdfID          | string   |
-| folderID       | string   |
-| googleFileID   | string   |
-| fileName       | string   |
-| uploadedAt     | datetime |
-| status         | string   |
+| Field Name     | Data Type |
+|----------------|-----------|
+| pdfID          | String    |
+| folderID       | String    |
+| googleFileID   | String    |
+| File Name      | String    |
+| Uploaded At    | DateTime  |
+| Status         | String    |
 
-### OCRResult
+### OCR Result
 
 | Field Name  | Data Type |
-|---------------|----------|
-| ocrResultID   | string   |
-| pdfID         | string   |
-| content       | text     |
-| updatedAt     | datetime |
+|-------------|-----------|
+| ocrResultID | String    |
+| pdfID       | String    |
+| Content     | Text      |
+| Updated At  | DateTime  |
 
 
 
@@ -45,38 +44,38 @@
 ```mermaid
 erDiagram
     User {
-        string userID
-        string googleID
-        string name
-        string email
-        datetime createdAt
+        String userID
+        String googleID
+        String Name
+        String Email
+        DateTime Created At
     }
 
     Folder {
-        string folderID
-        string userID
-        string googleFolderID
-        string folderName
-        datetime createdAt
+        String folderID
+        String userID
+        String googleFolderID
+        String Folder Name
+        DateTime Created At
     }
 
-    PDFFile {
-        string pdfID
-        string folderID
-        string googleFileID
-        string fileName
-        datetime uploadedAt
-        string status
+    PDF File {
+        String pdfID
+        String folderID
+        String googleFileID
+        String File Name
+        DateTime Uploaded At
+        String Status
     }
 
-    OCRResult {
-        string ocrResultID
-        string pdfID
-        text content
-        datetime updatedAt
+    OCR Result {
+        String ocrResultID
+        String pdfID
+        Text Content
+        DateTime Updated At
     }
 
-    User ||--o{ Folder : owns
-    Folder ||--o{ PDFFile : contains
-    PDFFile ||--|| OCRResult : has
+    User ||--o{ Folder : Owns
+    Folder ||--o{ PDF File : Contains
+    PDF File ||--|| OCR Result : Has
 ```
