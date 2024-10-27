@@ -4,11 +4,9 @@ import subprocess
 from pathlib import Path
 from openai import OpenAI
 
-
 client = OpenAI(
     api_key=os.getenv('OPENAI_API_KEY'),
 )
-
 
 # リポジトリのルートディレクトリを設定
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -71,11 +69,8 @@ def should_skip_translation(author_email):
     """
     skip_authors = [
         'github-actions[bot]@users.noreply.github.com',
-        # 他に追加したいボットのメールアドレスがあればここに追加
     ]
-    if author_email in skip_authors:
-        return True
-    return False
+    return author_email in skip_authors
 
 def translate_text(text, target_lang):
     """
@@ -112,30 +107,24 @@ def translate_file(source_file_path, target_file_path, target_lang):
     
     # ファイル名を翻訳
     if target_lang == 'English':
-        # 元のファイル名から拡張子を分離
         original_stem = Path(source_file_path).stem
         extension = Path(source_file_path).suffix
         
-        # ファイル名を翻訳
         try:
             translated_filename = translate_text(original_stem, target_lang)
-            # 特殊文字を除去し、スペースをハイフンに変換
             translated_filename = translated_filename.strip().replace(' ', '-')
-            # 新しいパスを作成（翻訳されたファイル名 + 元の拡張子）
             target_file_path = target_file_path.parent / f"{translated_filename}{extension}"
         except Exception as e:
             print(f'Failed to translate filename: {e}')
             return
 
     try:
-        # コンテンツを翻訳
         translated_content = translate_text(content, target_lang)
     except Exception as e:
         print(f'Failed to translate content: {e}')
         return
 
     try:
-        # ディレクトリが存在しない場合は作成
         target_file_path.parent.mkdir(parents=True, exist_ok=True)
         with open(target_file_path, 'w', encoding='utf-8') as f:
             f.write(translated_content)
@@ -151,13 +140,11 @@ def main():
         print('No changed files detected.')
         return
 
-    # 最新のコミットの作者を取得
     author_email = get_latest_commit_author(event)
     if should_skip_translation(author_email):
         print('Translation skipped due to commit author.')
         return
 
-    # リストを整理
     ja_changed_files = [file for file in changed_files if file.startswith('docs/ja/')]
     en_changed_files = [file for file in changed_files if file.startswith('docs/en/')]
 
@@ -166,24 +153,16 @@ def main():
 
     # jaからenへ翻訳
     for file in ja_changed_files:
-        source_file_path = Path(file)
+        source_file_path = ROOT_DIR / file
         relative_path = Path(file).relative_to('docs/ja')
         target_file_path = EN_DIR / relative_path
-
-        # ターゲットディレクトリに同じパスが存在しない場合は作成
-        target_file_path.parent.mkdir(parents=True, exist_ok=True)
-
         translate_file(source_file_path, target_file_path, 'English')
 
     # enからjaへ翻訳
     for file in en_changed_files:
-        source_file_path = Path(file)
+        source_file_path = ROOT_DIR / file
         relative_path = Path(file).relative_to('docs/en')
         target_file_path = JA_DIR / relative_path
-
-        # ターゲットディレクトリに同じパスが存在しない場合は作成
-        target_file_path.parent.mkdir(parents=True, exist_ok=True)
-
         translate_file(source_file_path, target_file_path, 'Japanese')
 
     if not ja_changed_files and not en_changed_files:
