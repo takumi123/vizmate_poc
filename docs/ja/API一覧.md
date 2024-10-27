@@ -1,4 +1,3 @@
- // Start of Selection
 # API設計
 
 ## 1. ユーザー認証API
