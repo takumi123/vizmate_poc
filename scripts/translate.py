@@ -105,19 +105,6 @@ def translate_file(source_file_path, target_file_path, target_lang):
 
     print(f'Translating {source_file_path} to {target_lang}...')
     
-    # ファイル名を翻訳
-    if target_lang == 'English':
-        original_stem = Path(source_file_path).stem
-        extension = Path(source_file_path).suffix
-        
-        try:
-            translated_filename = translate_text(original_stem, target_lang)
-            translated_filename = translated_filename.strip().replace(' ', '-')
-            target_file_path = target_file_path.parent / f"{translated_filename}{extension}"
-        except Exception as e:
-            print(f'Failed to translate filename: {e}')
-            return
-
     try:
         translated_content = translate_text(content, target_lang)
     except Exception as e:
