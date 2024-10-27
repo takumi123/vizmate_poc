@@ -91,7 +91,7 @@ def translate_text(text, target_lang):
             max_tokens=2000,
             temperature=0.3,
         )
-        translated_text = response.choices[0].message['content'].strip()
+        translated_text = response.choices[0].message.content.strip()
         return translated_text
     except Exception as e:
         print(f'Translation error: {e}')
