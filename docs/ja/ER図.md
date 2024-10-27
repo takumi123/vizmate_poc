@@ -2,7 +2,7 @@
 ## テーブル構造
 
 
-### User table
+### User
 | フィールド名 | データ型 |
 |--------------|----------|
 | userID       | string   |
@@ -11,7 +11,7 @@
 | email        | string   |
 | createdAt    | datetime |
 
-### Folder table
+### Folder
 | フィールド名      | データ型 |
 |-------------------|----------|
 | folderID          | string   |

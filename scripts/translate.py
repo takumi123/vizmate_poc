@@ -2,7 +2,7 @@ import os
 import json
 import subprocess
 from pathlib import Path
-import openai
+from openai import OpenAI
 
 
 client = OpenAI(
