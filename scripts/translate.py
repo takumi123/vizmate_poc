@@ -1,11 +1,13 @@
 import os
-import json
 import subprocess
 from pathlib import Path
 import openai
 
 # OpenAI API設定
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+if not OPENAI_API_KEY:
+    print('Error: OPENAI_API_KEY is not set.')
+    exit(1)
 openai.api_key = OPENAI_API_KEY
 
 # ディレクトリ設定
@@ -15,38 +17,21 @@ EN_DIR = DOCS_DIR / 'en'
 
 def get_changed_files():
     """
-    git diffを使用して、最新のコミットとその前のコミット間で変更されたファイルを取得
+    git diffを使用して、GITHUB_EVENT_BEFORE と GITHUB_SHA の間で変更されたファイルを取得
     """
+    before = os.getenv('GITHUB_EVENT_BEFORE')
+    after = os.getenv('GITHUB_SHA')
+    if not before or not after:
+        print('Error: GITHUB_EVENT_BEFORE or GITHUB_SHA is not defined.')
+        return []
     try:
-        diff_output = subprocess.check_output(['git', 'diff', '--name-only', 'HEAD~1', 'HEAD'], text=True)
+        diff_output = subprocess.check_output(['git', 'diff', '--name-only', before, after], text=True)
         changed_files = [line.strip() for line in diff_output.splitlines() if line.strip()]
         print(f'Changed files via git diff: {changed_files}')
         return changed_files
     except subprocess.CalledProcessError as e:
         print(f'Error getting changed files via git diff: {e}')
         return []
-
-def get_commit_messages():
-    """
-    最新のコミットメッセージを取得
-    """
-    try:
-        commit_message = subprocess.check_output(['git', 'log', '-1', '--pretty=%B'], text=True).strip()
-        print(f'Latest commit message: {commit_message}')
-        return commit_message
-    except subprocess.CalledProcessError as e:
-        print(f'Error getting commit messages: {e}')
-        return ''
-
-def should_skip_translation(commit_message):
-    """
-    コミットメッセージに '[skip translation]' が含まれているか確認
-    """
-    skip_keywords = ['[skip translation]']
-    for keyword in skip_keywords:
-        if keyword in commit_message:
-            return True
-    return False
 
 def translate_text(text, target_lang):
     """
@@ -60,6 +45,7 @@ def translate_text(text, target_lang):
                 {"role": "user", "content": text},
             ],
             max_tokens=2000,
+            temperature=0.3,
         )
         translated_text = response.choices[0].message['content'].strip()
         return translated_text
@@ -67,48 +53,68 @@ def translate_text(text, target_lang):
         print(f'Translation error: {e}')
         raise e
 
-def translate_files(source_dir, target_dir, target_lang):
+def translate_file(source_file_path, target_file_path, target_lang):
     """
-    指定されたディレクトリ内のファイルを翻訳し、ターゲットディレクトリに保存
+    単一ファイルを翻訳し、ターゲットファイルに保存
     """
-    for file_path in source_dir.glob('**/*'):
-        if file_path.is_file():
-            relative_path = file_path.relative_to(source_dir)
-            target_file_path = target_dir / relative_path
-
-            # ターゲットディレクトリに同じパスが存在しない場合は作成
-            target_file_path.parent.mkdir(parents=True, exist_ok=True)
-
-            with open(file_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-
-            print(f'Translating {file_path} to {target_lang}...')
-            translated_content = translate_text(content, target_lang)
-
-            with open(target_file_path, 'w', encoding='utf-8') as f:
-                f.write(translated_content)
-            print(f'Translated and saved to {target_file_path}')
-
-def main():
-    commit_message = get_commit_messages()
-    if should_skip_translation(commit_message):
-        print('Translation skipped due to commit message.')
+    try:
+        with open(source_file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception as e:
+        print(f'Error reading {source_file_path}: {e}')
         return
 
+    print(f'Translating {source_file_path} to {target_lang}...')
+    try:
+        translated_content = translate_text(content, target_lang)
+    except Exception as e:
+        print(f'Failed to translate {source_file_path}: {e}')
+        return
+
+    try:
+        with open(target_file_path, 'w', encoding='utf-8') as f:
+            f.write(translated_content)
+        print(f'Translated and saved to {target_file_path}')
+    except Exception as e:
+        print(f'Error writing to {target_file_path}: {e}')
+
+def main():
     changed_files = get_changed_files()
 
-    is_ja_changed = any(file.startswith('docs/ja/') for file in changed_files)
-    is_en_changed = any(file.startswith('docs/en/') for file in changed_files)
+    if not changed_files:
+        print('No changed files detected.')
+        return
 
-    print(f'isJaChanged: {is_ja_changed}, isEnChanged: {is_en_changed}')
+    # リストを整理
+    ja_changed_files = [file for file in changed_files if file.startswith('docs/ja/')]
+    en_changed_files = [file for file in changed_files if file.startswith('docs/en/')]
 
-    if is_ja_changed and not is_en_changed:
-        print('Translating from Japanese to English...')
-        translate_files(JA_DIR, EN_DIR, 'English')
-    elif is_en_changed and not is_ja_changed:
-        print('Translating from English to Japanese...')
-        translate_files(EN_DIR, JA_DIR, 'Japanese')
-    else:
+    print(f'ja_changed_files: {ja_changed_files}')
+    print(f'en_changed_files: {en_changed_files}')
+
+    # jaからenへ翻訳
+    for file in ja_changed_files:
+        source_file_path = DOCS_DIR / file
+        relative_path = Path(file).relative_to('docs/ja')
+        target_file_path = EN_DIR / relative_path
+
+        # ターゲットディレクトリに同じパスが存在しない場合は作成
+        target_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+        translate_file(source_file_path, target_file_path, 'English')
+
+    # enからjaへ翻訳
+    for file in en_changed_files:
+        source_file_path = DOCS_DIR / file
+        relative_path = Path(file).relative_to('docs/en')
+        target_file_path = JA_DIR / relative_path
+
+        # ターゲットディレクトリに同じパスが存在しない場合は作成
+        target_file_path.parent.mkdir(parents=True, exist_ok=True)
+
+        translate_file(source_file_path, target_file_path, 'Japanese')
+
+    if not ja_changed_files and not en_changed_files:
         print('No relevant changes detected for translation.')
 
 if __name__ == '__main__':
