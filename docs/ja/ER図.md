@@ -11,8 +11,7 @@
 | email        | string   |
 | createdAt    | datetime |
 
-### Folder
-
+### Folder table
 | フィールド名      | データ型 |
 |-------------------|----------|
 | folderID          | string   |

@@ -4,12 +4,11 @@ import subprocess
 from pathlib import Path
 import openai
 
-# OpenAI API設定
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-if not OPENAI_API_KEY:
-    print('Error: OPENAI_API_KEY is not set.')
-    exit(1)
-openai.api_key = OPENAI_API_KEY
+
+client = OpenAI(
+    api_key=os.getenv('OPENAI_API_KEY'),
+)
+
 
 # リポジトリのルートディレクトリを設定
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -83,7 +82,7 @@ def translate_text(text, target_lang):
     OpenAI APIを使用してテキストを翻訳
     """
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4",
             messages=[
                 {"role": "system", "content": f"You are a helpful assistant that translates text to {target_lang}."},
