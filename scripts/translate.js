@@ -1,5 +1,11 @@
+import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import axios from 'axios';
+
+// __dirname を定義
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // OpenAI API設定
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
@@ -21,7 +27,7 @@ async function translateText(text, targetLang) {
           { role: "system", content: `You are a helpful assistant that translates text to ${targetLang}.` },
           { role: "user", content: text },
         ],
-        max_tokens: 10000, // 必要に応じて調整
+        max_tokens: 1000, // 必要に応じて調整
       },
       {
         headers: {
@@ -54,42 +60,55 @@ async function translateFiles(sourceDir, targetDir, targetLang) {
 }
 
 (async () => {
-  // コミットメッセージを取得してスキップ判定
-  const githubEventPath = process.env.GITHUB_EVENT_PATH;
-  let shouldSkip = false;
-  if (githubEventPath) {
-    const githubEvent = JSON.parse(fs.readFileSync(githubEventPath, 'utf-8'));
-    const commitMessages = githubEvent.commits.map(commit => commit.message);
-    const skipKeywords = ['[skip translation]', '[skip ci]'];
-    shouldSkip = commitMessages.some(message =>
-      skipKeywords.some(keyword => message.includes(keyword))
-    );
-  }
+  try {
+    console.log('Translate script started.');
 
-  if (shouldSkip) {
-    console.log('Translation skipped due to commit message.');
-    process.exit(0);
-  }
+    // コミットメッセージを取得してスキップ判定
+    const githubEventPath = process.env.GITHUB_EVENT_PATH;
+    let shouldSkip = false;
+    if (githubEventPath) {
+      const githubEvent = JSON.parse(fs.readFileSync(githubEventPath, 'utf-8'));
+      const commitMessages = githubEvent.commits.map(commit => commit.message);
+      const skipKeywords = ['[skip translation]', '[skip ci]'];
+      shouldSkip = commitMessages.some(message =>
+        skipKeywords.some(keyword => message.includes(keyword))
+      );
+    }
 
-  // 変更されたファイルを取得
-  const githubEvent = process.env.GITHUB_EVENT_PATH
-    ? JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf-8'))
-    : null;
+    if (shouldSkip) {
+      console.log('Translation skipped due to commit message.');
+      process.exit(0);
+    }
 
-  const changedFiles = githubEvent
-    ? githubEvent.commits.flatMap(commit => commit.modified.concat(commit.added))
-    : [];
+    // 変更されたファイルを取得
+    const githubEvent = process.env.GITHUB_EVENT_PATH
+      ? JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf-8'))
+      : null;
 
-  const isJaChanged = changedFiles.some(file => file.startsWith('docs/ja/'));
-  const isEnChanged = changedFiles.some(file => file.startsWith('docs/en/'));
+    const changedFiles = githubEvent
+      ? githubEvent.commits.flatMap(commit => commit.modified.concat(commit.added))
+      : [];
 
-  if (isJaChanged && !isEnChanged) {
-    // jaからenへ翻訳
-    await translateFiles(jaDir, enDir, 'English');
-  } else if (isEnChanged && !isJaChanged) {
-    // enからjaへ翻訳
-    await translateFiles(enDir, jaDir, 'Japanese');
-  } else {
-    console.log('No relevant changes detected for translation.');
+    console.log('Changed files:', changedFiles);
+
+    const isJaChanged = changedFiles.some(file => file.startsWith('docs/ja/'));
+    const isEnChanged = changedFiles.some(file => file.startsWith('docs/en/'));
+
+    console.log(`isJaChanged: ${isJaChanged}, isEnChanged: ${isEnChanged}`);
+
+    if (isJaChanged && !isEnChanged) {
+      console.log('Translating from Japanese to English...');
+      await translateFiles(jaDir, enDir, 'English');
+    } else if (isEnChanged && !isJaChanged) {
+      console.log('Translating from English to Japanese...');
+      await translateFiles(enDir, jaDir, 'Japanese');
+    } else {
+      console.log('No relevant changes detected for translation.');
+    }
+
+    console.log('Translate script completed successfully.');
+  } catch (error) {
+    console.error('Script failed with error:', error);
+    process.exit(1);
   }
 })();
