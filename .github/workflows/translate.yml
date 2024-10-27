@@ -40,6 +40,6 @@ jobs:
         with:
           commit_message: "🔄 Update translations from ${{ github.ref }}"
           branch: ${{ github.ref }}
-          file_pattern: 'docs/en/**,docs/ja/**'
+          file_pattern: 'docs/en/**/*'  # パターンをより具体的に
           commit_user_name: "github-actions"
           commit_user_email: "github-actions@github.com"
