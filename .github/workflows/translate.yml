@@ -41,3 +41,5 @@ jobs:
           commit_message: "🔄 Update translations from ${{ github.ref }}"
           branch: ${{ github.ref }}
           file_pattern: 'docs/en/**,docs/ja/**'
+          commit_user_name: "github-actions"
+          commit_user_email: "github-actions@github.com"

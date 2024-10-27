@@ -1,4 +1,5 @@
 import os
+import json
 import subprocess
 from pathlib import Path
 import openai
@@ -15,14 +16,30 @@ DOCS_DIR = Path(__file__).resolve().parent.parent / 'docs'
 JA_DIR = DOCS_DIR / 'ja'
 EN_DIR = DOCS_DIR / 'en'
 
-def get_changed_files():
+def get_event_data():
     """
-    git diffを使用して、GITHUB_EVENT_BEFORE と GITHUB_SHA の間で変更されたファイルを取得
+    GitHub Actionsのイベントペイロードを取得
     """
-    before = os.getenv('GITHUB_EVENT_BEFORE')
-    after = os.getenv('GITHUB_SHA')
+    event_path = os.getenv('GITHUB_EVENT_PATH')
+    if not event_path:
+        print('Error: GITHUB_EVENT_PATH is not defined.')
+        exit(1)
+    try:
+        with open(event_path, 'r', encoding='utf-8') as f:
+            event = json.load(f)
+        return event
+    except Exception as e:
+        print(f'Error reading GITHUB_EVENT_PATH: {e}')
+        exit(1)
+
+def get_changed_files(event):
+    """
+    pushイベントのbeforeと afterを使用して変更されたファイルを取得
+    """
+    before = event.get('before')
+    after = event.get('after')
     if not before or not after:
-        print('Error: GITHUB_EVENT_BEFORE or GITHUB_SHA is not defined.')
+        print('Error: before or after commit SHA is missing in event data.')
         return []
     try:
         diff_output = subprocess.check_output(['git', 'diff', '--name-only', before, after], text=True)
@@ -33,14 +50,14 @@ def get_changed_files():
         print(f'Error getting changed files via git diff: {e}')
         return []
 
-def get_commit_author():
+def get_latest_commit_author():
     """
     最新のコミットの作者を取得
     """
     try:
-        author = subprocess.check_output(['git', 'log', '-1', '--pretty=format:%ae'], text=True).strip()
-        print(f'Latest commit author email: {author}')
-        return author
+        author_email = subprocess.check_output(['git', 'log', '-1', '--pretty=format:%ae'], text=True).strip()
+        print(f'Latest commit author email: {author_email}')
+        return author_email
     except subprocess.CalledProcessError as e:
         print(f'Error getting commit author: {e}')
         return ''
@@ -49,11 +66,10 @@ def should_skip_translation(author_email):
     """
     特定のユーザー（例: GitHub Actions）によるコミットの場合、翻訳をスキップ
     """
-    # GitHub Actions のデフォルトのユーザーは 'github-actions[bot]' のメールアドレスです
-    # 確認するメールアドレスを以下に追加
+    # GitHub Actions のデフォルトのユーザーは 'github-actions@github.com'
     skip_authors = [
-        'github-actions[bot]@users.noreply.github.com',
-        # 必要に応じて他のメールアドレスを追加
+        'github-actions@github.com',
+        # 他に追加したいアクションユーザーがあればここに追加
     ]
     if author_email in skip_authors:
         return True
@@ -105,16 +121,17 @@ def translate_file(source_file_path, target_file_path, target_lang):
         print(f'Error writing to {target_file_path}: {e}')
 
 def main():
-    # 最新のコミットの作者を取得
-    author_email = get_commit_author()
-    if should_skip_translation(author_email):
-        print('Translation skipped due to commit author.')
-        return
-
-    changed_files = get_changed_files()
+    event = get_event_data()
+    changed_files = get_changed_files(event)
 
     if not changed_files:
         print('No changed files detected.')
+        return
+
+    # 最新のコミットの作者を取得
+    author_email = get_latest_commit_author()
+    if should_skip_translation(author_email):
+        print('Translation skipped due to commit author.')
         return
 
     # リストを整理
