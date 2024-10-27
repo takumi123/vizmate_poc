@@ -1,9 +1,8 @@
+## Table Structure
 
-## テーブル構造
 
 ### User
-
-| フィールド名 | データ型 |
+| Field Name | Data Type |
 |--------------|----------|
 | userID       | string   |
 | googleID     | string   |
@@ -12,8 +11,7 @@
 | createdAt    | datetime |
 
 ### Folder
-
-| フィールド名      | データ型 |
+| Field Name      | Data Type |
 |-------------------|----------|
 | folderID          | string   |
 | userID            | string   |
@@ -23,7 +21,7 @@
 
 ### PDFFile
 
-| フィールド名   | データ型 |
+| Field Name   | Data Type |
 |----------------|----------|
 | pdfID          | string   |
 | folderID       | string   |
@@ -34,7 +32,7 @@
 
 ### OCRResult
 
-| フィールド名  | データ型 |
+| Field Name  | Data Type |
 |---------------|----------|
 | ocrResultID   | string   |
 | pdfID         | string   |

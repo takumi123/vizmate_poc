@@ -4,7 +4,7 @@ https://japan-marketing-co-jp.gitbook.io/vizmate_poc
 ---
 
 # English
- // Start Generation Here
+
 ## Project Overview
 
 This project is a web application that allows users to log in with their Google accounts, automatically import PDF files from a specified folder in Google Drive, perform OCR processing, view and edit the results on the web, and supports downloading them in CSV format.
