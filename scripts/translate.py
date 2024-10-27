@@ -11,8 +11,9 @@ if not OPENAI_API_KEY:
     exit(1)
 openai.api_key = OPENAI_API_KEY
 
-# ディレクトリ設定
-DOCS_DIR = Path(__file__).resolve().parent.parent / 'docs'
+# リポジトリのルートディレクトリを設定
+ROOT_DIR = Path(__file__).resolve().parent.parent
+DOCS_DIR = ROOT_DIR / 'docs'
 JA_DIR = DOCS_DIR / 'ja'
 EN_DIR = DOCS_DIR / 'en'
 
@@ -69,7 +70,6 @@ def should_skip_translation(author_email):
     """
     特定のユーザー（例: ボット）によるコミットの場合、翻訳をスキップ
     """
-    # ボットのメールアドレスをリストに含める
     skip_authors = [
         'github-actions[bot]@users.noreply.github.com',
         # 他に追加したいボットのメールアドレスがあればここに追加
@@ -146,7 +146,7 @@ def main():
 
     # jaからenへ翻訳
     for file in ja_changed_files:
-        source_file_path = DOCS_DIR / file
+        source_file_path = Path(file)
         relative_path = Path(file).relative_to('docs/ja')
         target_file_path = EN_DIR / relative_path
 
@@ -157,7 +157,7 @@ def main():
 
     # enからjaへ翻訳
     for file in en_changed_files:
-        source_file_path = DOCS_DIR / file
+        source_file_path = Path(file)
         relative_path = Path(file).relative_to('docs/en')
         target_file_path = JA_DIR / relative_path
 
