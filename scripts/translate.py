@@ -34,7 +34,7 @@ def get_event_data():
 
 def get_changed_files(event):
     """
-    pushイベントのbeforeと afterを使用して変更されたファイルを取得
+    pushイベントのbeforeとafterを使用して変更されたファイルを取得
     """
     before = event.get('before')
     after = event.get('after')
@@ -50,26 +50,26 @@ def get_changed_files(event):
         print(f'Error getting changed files via git diff: {e}')
         return []
 
-def get_latest_commit_author():
+def get_latest_commit_author(event):
     """
-    最新のコミットの作者を取得
+    イベントデータから最新のコミットの作者を取得
     """
     try:
-        author_email = subprocess.check_output(['git', 'log', '-1', '--pretty=format:%ae'], text=True).strip()
+        author_email = event['head_commit']['author']['email']
         print(f'Latest commit author email: {author_email}')
         return author_email
-    except subprocess.CalledProcessError as e:
-        print(f'Error getting commit author: {e}')
+    except Exception as e:
+        print(f'Error retrieving author email from event data: {e}')
         return ''
 
 def should_skip_translation(author_email):
     """
-    特定のユーザー（例: GitHub Actions）によるコミットの場合、翻訳をスキップ
+    特定のユーザー（例: ボット）によるコミットの場合、翻訳をスキップ
     """
-    # GitHub Actions のデフォルトのユーザーは 'github-actions@github.com'
+    # ボットのメールアドレスをリストに含める
     skip_authors = [
-        'github-actions@github.com',
-        # 他に追加したいアクションユーザーがあればここに追加
+        'github-actions[bot]@users.noreply.github.com',
+        # 他に追加したいボットのメールアドレスがあればここに追加
     ]
     if author_email in skip_authors:
         return True
@@ -129,7 +129,7 @@ def main():
         return
 
     # 最新のコミットの作者を取得
-    author_email = get_latest_commit_author()
+    author_email = get_latest_commit_author(event)
     if should_skip_translation(author_email):
         print('Translation skipped due to commit author.')
         return
