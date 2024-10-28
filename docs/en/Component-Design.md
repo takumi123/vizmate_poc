@@ -1,12 +1,12 @@
 # React Component Design
 
-
 ## Component Description
-1. **App**: The root component of the application
-2. **Layout**: A component that provides a common layout
+1. **App**: Root component of the application
+2. **Layout**: Component providing common layout
    - Header: Displays the header section
    - Footer: Displays the footer section
-   - Main Content: The main content area
+   - Main Content: Main content area
+   - Sidebar: Displays the sidebar section
 
 3. **Page Components**:
    - LoginPage: Login screen
@@ -19,21 +19,21 @@
    - PDFListItem: Displays each item in the PDF list
    - OCRTextEditor: Component for editing OCR text
    - PDFViewer: Component for previewing PDFs
-   - NavigationButtons: "Next" and "Back" navigation buttons
+   - NavigationButtons: Navigation buttons for "Next" and "Back"
 
 ## State Management
 
-- Global states (user information, selected folders, etc.) are managed using React Context or Redux
-- Local states (form inputs, temporary UI states, etc.) use the React useState hook
+- Global state (user information, selected folder, etc.) is managed using React Context or Redux
+- Local state (form inputs, temporary UI state, etc.) is managed using React's useState hook
 
-## Data Fetching
+## Data Retrieval
 
-- If server-side rendering is necessary, use Next.js's getServerSideProps
-- For client-side data fetching, use React Query to optimize caching and refetching
+- If server-side rendering is required, use Next.js's getServerSideProps
+- For client-side data retrieval, use React Query to optimize caching and re-fetching
 
 ## Error Handling
 
-- Create a global error handling component to catch and display errors throughout the application
+- Create a global error handling component to catch and display errors across the application
 
 ## Accessibility
 
