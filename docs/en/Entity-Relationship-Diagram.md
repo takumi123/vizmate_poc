@@ -9,6 +9,7 @@
 | Email        | String   |
 | Creation Date Time    | Date Time |
 
+
 ### Folder
 | Field Name      | Data Type |
 |-------------------|----------|
