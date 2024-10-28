@@ -64,7 +64,7 @@ def review_document(content, existing_review, lang):
             messages=[
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=1000,
+            max_completion_tokens=1000,  # max_tokensからmax_completion_tokensに変更
             temperature=0.3
         )
         return response.choices[0].message.content.strip()
