@@ -7,7 +7,7 @@
    - Footer: Displays the footer section
    - Main Content: Main content area
    - Sidebar: Displays the sidebar section
-
+   
 
 3. **Page Components**:
    - LoginPage: Login screen

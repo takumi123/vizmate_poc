@@ -82,8 +82,8 @@ def review_directory(dir_path, existing_review, lang):
                 content = f.read()
             
             relative_path = file_path.relative_to(dir_path)
-            reviews.append(f"\n## {relative_path}\n")
-            reviews.append(review_document(content, existing_review, lang))
+            review_content = review_document(content, existing_review, lang)
+            reviews.append(f"\n## {relative_path}\n\n{review_content}\n")
             
         except Exception as e:
             print(f'Error reviewing {file_path}: {e}')
@@ -98,9 +98,9 @@ def save_review(content, file_path):
         REVIEWS_DIR.mkdir(parents=True, exist_ok=True)
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(content)
-        print(f'Review saved to {file_path}')
+        print(f'レビュー結果を{file_path}に保存しました')
     except Exception as e:
-        print(f'Error saving review to {file_path}: {e}')
+        print(f'レビュー結果の保存中にエラーが発生しました {file_path}: {e}')
 
 def main():
     existing_reviews = get_existing_reviews()
