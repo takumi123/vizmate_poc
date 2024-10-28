@@ -15,6 +15,7 @@ This document is a requirements specification for the development of a web appli
 - Backend, Database, Storage: Vercel
 - User Authentication: Google login only
 
+
 ## 3. Functional Requirements
 
 ### 3.1 User Authentication
