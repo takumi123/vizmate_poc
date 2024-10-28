@@ -43,13 +43,15 @@ def review_document(content, existing_review, lang):
     ChatGPTを使用してドキュメントをレビュー
     """
     system_prompt = f"""あなたは{lang}のドキュメントレビュワーです。
-以下の点に注意してドキュメントをレビューしてください：
-- 文法や表現の誤り
-- 一貫性のない用語や表現
-- 不明確または曖昧な説明
-- 技術的な正確性
+以下の点に注目してシステム設計上の抜け漏れをレビューしてください：
+- 必要な機能要件の欠落
+- システムコンポーネント間の連携の不足
+- セキュリティ上の懸念点
+- スケーラビリティに関する考慮不足
+- エラーハンドリングの不備
+- 監視やログ収集の仕組みの欠如
 
-既存のレビュー内容も考慮して、新しい視点からレビューを行ってください。
+既存のレビュー内容も考慮して、システム的な観点から簡潔にレビューを行ってください。
 """
 
     context = f"既存のレビュー内容:\n{existing_review}\n\nレビュー対象のドキュメント:\n{content}"
@@ -61,7 +63,7 @@ def review_document(content, existing_review, lang):
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": context}
             ],
-            max_tokens=2000,
+            max_tokens=1000,
             temperature=0.3
         )
         return response.choices[0].message.content.strip()
@@ -81,8 +83,6 @@ def review_directory(dir_path, existing_review, lang):
             
             relative_path = file_path.relative_to(dir_path)
             reviews.append(f"\n## {relative_path}\n")
-            reviews.append(f"### ファイル内容\n```markdown\n{content}\n```\n")
-            reviews.append("### レビュー内容\n")
             reviews.append(review_document(content, existing_review, lang))
             
         except Exception as e:

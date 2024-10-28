@@ -9,12 +9,14 @@
    - Main Content: メインコンテンツエリア
    - Sidebar: サイドバーセクションを表示
 
+
 3. **ページコンポーネント**:
    - LoginPage: ログイン画面
    - FolderSelectionPage: Google Driveフォルダ選択画面
    - PDFListPage: PDFファイルリスト画面
    - OCRDetailPage: OCR結果詳細および編集画面
    - CSVDownloadPage: CSVダウンロード画面
+
 
 4. **再利用可能なコンポーネント**:
    - PDFListItem: PDFリストの各項目を表示
