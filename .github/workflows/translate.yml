@@ -1,4 +1,4 @@
-name: Translate Documents
+name: Document Translation and Review
 
 on:
   push:
@@ -7,23 +7,23 @@ on:
 
 permissions:
   contents: write  # リポジトリのコンテンツを変更する権限
-  pull-requests: write  # PRに対する権限（必要な場合）
+  pull-requests: write  # PRに対する権限
 
 jobs:
-  translate:
+  translate-and-review:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }} # プッシュされたブランチを参照
-          fetch-depth: 0  # フル履歴を取得
+          ref: ${{ github.ref }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'  # プロジェクトに合わせて調整
+          python-version: '3.9'
 
       - name: Install dependencies
         run: |
@@ -36,15 +36,19 @@ jobs:
         run: |
           python scripts/translate.py
 
+      - name: Review documentation
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python scripts/review_docs.py
+
       - name: Commit and push changes
-        # 翻訳ファイルが作成された場合のみコミット
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
-          # 変更があるかチェック
           if [[ -n "$(git status --porcelain)" ]]; then
-            git add docs/
-            git commit -m "Translate documents"
+            git add docs/ reviews/
+            git commit -m "Translate documents and add reviews"
             git push origin ${{ github.ref_name }}
           fi
