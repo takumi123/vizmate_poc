@@ -7,7 +7,7 @@
 | googleID     | String   |
 | Name         | String   |
 | Email        | String   |
-| Creation Date Time    | Date Time |
+| Created At   | DateTime |
 
 
 ### Folder
@@ -16,8 +16,8 @@
 | folderID          | String   |
 | userID            | String   |
 | googleFolderID    | String   |
-| Folder Name        | String   |
-| Creation Date Time         | Date Time |
+| Folder Name       | String   |
+| Created At        | DateTime |
 
 ### PDF File
 
@@ -26,9 +26,9 @@
 | pdfID          | String   |
 | folderID       | String   |
 | googleFileID   | String   |
-| File Name       | String   |
-| Upload Date Time | Date Time |
-| Status             | String   |
+| File Name      | String   |
+| Uploaded At    | DateTime |
+| Status         | String   |
 
 ### OCR Result
 
@@ -36,8 +36,8 @@
 |---------------|----------|
 | ocrResultID   | String   |
 | pdfID         | String   |
-| Content           | Text |
-| Update Date Time     | Date Time |
+| Content       | Text     |
+| Updated At    | DateTime |
 
 
 
@@ -49,7 +49,7 @@ erDiagram
         String googleID
         String Name
         String Email
-        Date Time Creation Date Time
+        DateTime Created At
     }
 
     Folder {
@@ -57,7 +57,7 @@ erDiagram
         String userID
         String googleFolderID
         String Folder Name
-        Date Time Creation Date Time
+        DateTime Created At
     }
 
     PDF File {
@@ -65,7 +65,7 @@ erDiagram
         String folderID
         String googleFileID
         String File Name
-        Date Time Upload Date Time
+        DateTime Uploaded At
         String Status
     }
 
@@ -73,7 +73,7 @@ erDiagram
         String ocrResultID
         String pdfID
         Text Content
-        Date Time Update Date Time
+        DateTime Updated At
     }
 
     User ||--o{ Folder : Owns
