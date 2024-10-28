@@ -1,9 +1,8 @@
 # API Design
-
 ## 1. User Authentication API
 - **Endpoint:** `/api/auth/google`
 - **Method:** GET
-- **Description:** Initiates Google OAuth authentication and redirects the user to Google's authentication screen.
+- **Description:** Initiates Google OAuth authentication and redirects the user to the Google authentication screen.
 - **Request Parameters:** None
 - **Response:**
   - **Success:** Redirect to Google's authentication screen
@@ -37,20 +36,20 @@
 ## 3. Folder Selection API
 - **Endpoint:** `/api/folders/select`
 - **Method:** POST
-- **Description:** Selects the folder for OCR processing.
+- **Description:** Selects a folder for OCR processing.
 - **Request Parameters:**
-  - `folderId` (string): ID of the folder to select
+  - `folderId` (string): The ID of the folder to be selected
     ```json
     {
-      "folderId": "ID of the selected folder"
+      "folderId": "Selected Folder ID"
     }
     ```
 - **Response:**
   - **Success:**
     ```json
     {
-      "message": "The folder has been successfully selected.",
-      "folderId": "ID of the selected folder"
+      "message": "The folder has been selected successfully.",
+      "folderId": "Selected Folder ID"
     }
     ```
   - **Error:** Returns an error message.
@@ -85,9 +84,9 @@
 ## 5. OCR Result Retrieval API
 - **Endpoint:** `/api/ocr/:pdfId`
 - **Method:** GET
-- **Description:** Retrieves the OCR results for a specific PDF file.
+- **Description:** Retrieves the OCR result of a specific PDF file.
 - **Request Parameters:**
-  - `pdfId` (string): ID of the PDF file to retrieve OCR results
+  - `pdfId` (string): The ID of the PDF file to retrieve the OCR result
 - **Response:**
   - **Success:**
     ```json
@@ -101,9 +100,9 @@
 ## 6. OCR Result Update API
 - **Endpoint:** `/api/ocr/:pdfId`
 - **Method:** PUT
-- **Description:** Updates the OCR results.
+- **Description:** Updates the OCR result.
 - **Request Parameters:**
-  - `pdfId` (string): ID of the PDF file to update OCR results
+  - `pdfId` (string): The ID of the PDF file to update the OCR result
   - Body:
     ```json
     {
@@ -114,7 +113,7 @@
   - **Success:**
     ```json
     {
-      "message": "OCR results have been successfully updated.",
+      "message": "The OCR result has been updated successfully.",
       "pdfId": "pdfId1"
     }
     ```
@@ -126,9 +125,5 @@
 - **Description:** Exports all OCR results in CSV format.
 - **Request Parameters:** None
 - **Response:**
-  - **Success:** Downloads the CSV file.
+  - **Success:** Downloads a CSV file.
   - **Error:** Returns an error message.
-
-```
-
-
