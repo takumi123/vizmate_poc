@@ -13,7 +13,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 DOCS_DIR = ROOT_DIR / 'docs'
 JA_DIR = DOCS_DIR / 'ja'
 EN_DIR = DOCS_DIR / 'en'
-REVIEWS_DIR = ROOT_DIR / 'reviews'
+REVIEWS_DIR = DOCS_DIR / 'reviews'
 
 def get_existing_reviews():
     """
@@ -81,6 +81,8 @@ def review_directory(dir_path, existing_review, lang):
             
             relative_path = file_path.relative_to(dir_path)
             reviews.append(f"\n## {relative_path}\n")
+            reviews.append(f"### ファイル内容\n```markdown\n{content}\n```\n")
+            reviews.append("### レビュー内容\n")
             reviews.append(review_document(content, existing_review, lang))
             
         except Exception as e:
