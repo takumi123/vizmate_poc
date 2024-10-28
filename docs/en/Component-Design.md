@@ -1,12 +1,13 @@
 # React Component Design
 
 ## Component Description
-1. **App**: Root component of the application
-2. **Layout**: Component providing common layout
+1. **App**: The root component of the application
+2. **Layout**: Component that provides common layout
    - Header: Displays the header section
    - Footer: Displays the footer section
    - Main Content: Main content area
    - Sidebar: Displays the sidebar section
+
 
 3. **Page Components**:
    - LoginPage: Login screen
@@ -15,10 +16,11 @@
    - OCRDetailPage: OCR result detail and editing screen
    - CSVDownloadPage: CSV download screen
 
+
 4. **Reusable Components**:
    - PDFListItem: Displays each item in the PDF list
    - OCRTextEditor: Component for editing OCR text
-   - PDFViewer: Component for previewing PDFs
+   - PDFViewer: Component for previewing PDF
    - NavigationButtons: Navigation buttons for "Next" and "Back"
 
 ## State Management
@@ -28,7 +30,7 @@
 
 ## Data Retrieval
 
-- If server-side rendering is required, use Next.js's getServerSideProps
+- If server-side rendering is needed, use Next.js's getServerSideProps
 - For client-side data retrieval, use React Query to optimize caching and re-fetching
 
 ## Error Handling
